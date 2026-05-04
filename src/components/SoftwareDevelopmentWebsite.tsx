@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-import { ArrowRight, ChevronRight, Menu, X, Code, Zap, Settings2, Sparkles } from "lucide-react"
+import { ArrowRight, ChevronRight, Menu, X, Home, Search, MapPin, Building2, TrendingUp, Star, Phone, Mail, Globe } from "lucide-react"
 import { motion, type Variants } from "framer-motion"
 import { GridMotion } from "./ui/grid-motion"
 import { cn } from "@/lib/utils"
@@ -14,7 +14,7 @@ const buttonVariants = cva(
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        secondary: "bg-secondary text-secondary-secondary hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },
@@ -45,23 +45,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   },
 )
 Button.displayName = "Button"
-
-const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("rounded-lg border bg-card text-card-foreground shadow-sm", className)} {...props} />
-))
-Card.displayName = "Card"
-
-const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("flex flex-col space-y-1.5 p-6", className)} {...props} />
-  ),
-)
-CardHeader.displayName = "CardHeader"
-
-const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />,
-)
-CardContent.displayName = "CardContent"
 
 const defaultContainerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -124,34 +107,300 @@ const transitionVariants = {
   },
 }
 
-const menuItems = [
-  { name: "Услуги", href: "#services" },
-  { name: "Решения", href: "#solutions" },
-  { name: "О нас", href: "#about" },
-  { name: "Контакты", href: "#contact" },
+type Language = "en" | "sl" | "ru"
+
+const translations: Record<Language, Record<string, string>> = {
+  en: {
+    nav_buy: "Buy",
+    nav_rent: "Rent",
+    nav_about: "About",
+    nav_contact: "Contact",
+    nav_login: "Sign In",
+    nav_list: "List Property",
+    hero_badge: "Slovenia's Premier Real Estate Platform",
+    hero_title: "Find Your Dream Property in",
+    hero_highlight: "Slovenia",
+    hero_sub: "Thousands of listings across Ljubljana, Maribor, Bled, Piran and all of Slovenia. Buy or rent — we connect you with the best.",
+    hero_cta: "Browse Listings",
+    hero_cta2: "List Your Property",
+    search_placeholder: "City, region or address...",
+    search_btn: "Search",
+    tab_buy: "Buy",
+    tab_rent: "Rent",
+    stats_listings: "Active Listings",
+    stats_sold: "Properties Sold",
+    stats_agents: "Trusted Agents",
+    stats_cities: "Cities Covered",
+    featured_title: "Featured Properties",
+    featured_sub: "Hand-picked listings from across Slovenia",
+    prop_buy: "For Sale",
+    prop_rent: "For Rent",
+    prop_rooms: "rooms",
+    prop_area: "m²",
+    features_title: "Why Choose ILAL SlovenEstate",
+    features_sub: "The most trusted real estate platform in Slovenia",
+    f1_title: "Largest Database",
+    f1_desc: "Over 5,000 verified listings across all Slovenian regions",
+    f2_title: "Advanced Search",
+    f2_desc: "Filter by price, area, rooms, region, and property type",
+    f3_title: "Trusted Agents",
+    f3_desc: "All agents are verified and reviewed by real clients",
+    f4_title: "Market Insights",
+    f4_desc: "Up-to-date pricing trends and investment analytics",
+    cta_title: "Ready to find your perfect property?",
+    cta_sub: "Join thousands of buyers and renters who found their home in Slovenia through ILAL SlovenEstate",
+    cta_btn: "Get Started Free",
+    footer_services: "Services",
+    footer_buy: "Buy Property",
+    footer_rent: "Rent Property",
+    footer_sell: "Sell Property",
+    footer_invest: "Investment",
+    footer_appraisal: "Appraisal",
+    footer_company: "Company",
+    footer_about: "About Us",
+    footer_team: "Our Team",
+    footer_careers: "Careers",
+    footer_blog: "Blog",
+    footer_press: "Press",
+    footer_contact: "Contact",
+    footer_copy: "2024 ILAL SlovenEstate. All rights reserved.",
+    footer_privacy: "Privacy Policy",
+    footer_terms: "Terms of Use",
+    footer_cookies: "Cookie Policy",
+    regions_title: "Browse by Region",
+    regions_sub: "Explore properties across all Slovenian regions",
+  },
+  sl: {
+    nav_buy: "Nakup",
+    nav_rent: "Najem",
+    nav_about: "O nas",
+    nav_contact: "Kontakt",
+    nav_login: "Prijava",
+    nav_list: "Objavi oglas",
+    hero_badge: "Vodilna platforma za nepremičnine v Sloveniji",
+    hero_title: "Najdite nepremičnino svojih sanj v",
+    hero_highlight: "Sloveniji",
+    hero_sub: "Tisoče oglasov v Ljubljani, Mariboru, Bledu, Piranu in po vsej Sloveniji. Nakup ali najem — povežemo vas z najboljšim.",
+    hero_cta: "Oglej si oglase",
+    hero_cta2: "Objavi nepremičnino",
+    search_placeholder: "Mesto, regija ali naslov...",
+    search_btn: "Išči",
+    tab_buy: "Nakup",
+    tab_rent: "Najem",
+    stats_listings: "Aktivni oglasi",
+    stats_sold: "Prodanih nepremičnin",
+    stats_agents: "Zaupanja vredni agenti",
+    stats_cities: "Pokrita mesta",
+    featured_title: "Izbrane nepremičnine",
+    featured_sub: "Ročno izbrani oglasi iz vse Slovenije",
+    prop_buy: "Naprodaj",
+    prop_rent: "Najem",
+    prop_rooms: "sob",
+    prop_area: "m²",
+    features_title: "Zakaj izbrati ILAL SlovenEstate",
+    features_sub: "Najbolj zaupanja vredna platforma za nepremičnine v Sloveniji",
+    f1_title: "Največja baza",
+    f1_desc: "Več kot 5.000 preverjenih oglasov po vseh slovenskih regijah",
+    f2_title: "Napredno iskanje",
+    f2_desc: "Filtrirajte po ceni, površini, sobah, regiji in vrsti nepremičnine",
+    f3_title: "Preverjeni agenti",
+    f3_desc: "Vsi agenti so preverjeni in ocenjeni s strani pravih strank",
+    f4_title: "Tržni vpogled",
+    f4_desc: "Ažurni trendi cen in investicijska analitika",
+    cta_title: "Pripravljeni najti svojo idealno nepremičnino?",
+    cta_sub: "Pridružite se tisočim kupcem in najemnikom, ki so prek ILAL SlovenEstate našli dom v Sloveniji",
+    cta_btn: "Začnite brezplačno",
+    footer_services: "Storitve",
+    footer_buy: "Nakup nepremičnine",
+    footer_rent: "Najem nepremičnine",
+    footer_sell: "Prodaja nepremičnine",
+    footer_invest: "Investicije",
+    footer_appraisal: "Ocenjevanje",
+    footer_company: "Podjetje",
+    footer_about: "O nas",
+    footer_team: "Naša ekipa",
+    footer_careers: "Karierne priložnosti",
+    footer_blog: "Blog",
+    footer_press: "Mediji",
+    footer_contact: "Kontakt",
+    footer_copy: "2024 ILAL SlovenEstate. Vse pravice pridržane.",
+    footer_privacy: "Politika zasebnosti",
+    footer_terms: "Pogoji uporabe",
+    footer_cookies: "Politika piškotkov",
+    regions_title: "Brskajte po regijah",
+    regions_sub: "Raziščite nepremičnine po vseh slovenskih regijah",
+  },
+  ru: {
+    nav_buy: "Купить",
+    nav_rent: "Арендовать",
+    nav_about: "О нас",
+    nav_contact: "Контакты",
+    nav_login: "Войти",
+    nav_list: "Разместить объявление",
+    hero_badge: "Ведущая платформа недвижимости Словении",
+    hero_title: "Найдите недвижимость мечты в",
+    hero_highlight: "Словении",
+    hero_sub: "Тысячи объявлений в Любляне, Мариборе, Бледе, Пиране и по всей Словении. Покупка или аренда — мы найдём лучшее для вас.",
+    hero_cta: "Смотреть объявления",
+    hero_cta2: "Разместить объект",
+    search_placeholder: "Город, регион или адрес...",
+    search_btn: "Найти",
+    tab_buy: "Купить",
+    tab_rent: "Арендовать",
+    stats_listings: "Активных объявлений",
+    stats_sold: "Продано объектов",
+    stats_agents: "Проверенных агентов",
+    stats_cities: "Городов покрыто",
+    featured_title: "Избранные объекты",
+    featured_sub: "Лучшие предложения по всей Словении",
+    prop_buy: "Продажа",
+    prop_rent: "Аренда",
+    prop_rooms: "комн.",
+    prop_area: "м²",
+    features_title: "Почему ILAL SlovenEstate",
+    features_sub: "Самая доверенная платформа недвижимости в Словении",
+    f1_title: "Крупнейшая база",
+    f1_desc: "Более 5 000 проверенных объявлений по всем регионам Словении",
+    f2_title: "Умный поиск",
+    f2_desc: "Фильтрация по цене, площади, комнатам, региону и типу объекта",
+    f3_title: "Проверенные агенты",
+    f3_desc: "Все агенты верифицированы и получили оценки от реальных клиентов",
+    f4_title: "Аналитика рынка",
+    f4_desc: "Актуальные тренды цен и инвестиционная аналитика",
+    cta_title: "Готовы найти идеальную недвижимость?",
+    cta_sub: "Тысячи покупателей и арендаторов уже нашли свой дом в Словении через ILAL SlovenEstate",
+    cta_btn: "Начать бесплатно",
+    footer_services: "Услуги",
+    footer_buy: "Купить недвижимость",
+    footer_rent: "Снять недвижимость",
+    footer_sell: "Продать недвижимость",
+    footer_invest: "Инвестиции",
+    footer_appraisal: "Оценка",
+    footer_company: "Компания",
+    footer_about: "О нас",
+    footer_team: "Наша команда",
+    footer_careers: "Карьера",
+    footer_blog: "Блог",
+    footer_press: "Пресса",
+    footer_contact: "Контакты",
+    footer_copy: "2024 ILAL SlovenEstate. Все права защищены.",
+    footer_privacy: "Политика конфиденциальности",
+    footer_terms: "Условия использования",
+    footer_cookies: "Политика cookies",
+    regions_title: "Поиск по регионам",
+    regions_sub: "Исследуйте недвижимость по всем регионам Словении",
+  },
+}
+
+const listings = [
+  {
+    id: 1,
+    type: "buy",
+    title: "Modern Apartment, Ljubljana Center",
+    location: "Ljubljana, Šiška",
+    price: "€285,000",
+    rooms: 3,
+    area: 78,
+    image: "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/fd974564-c3d8-469b-bc34-c5070b904421.jpg",
+    badge: "buy",
+    rating: 4.9,
+  },
+  {
+    id: 2,
+    type: "buy",
+    title: "Villa with Lake View, Bled",
+    location: "Bled, Gorenjska",
+    price: "€620,000",
+    rooms: 5,
+    area: 210,
+    image: "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/099ee108-2e73-4529-b37a-2142693406a8.jpg",
+    badge: "buy",
+    rating: 5.0,
+  },
+  {
+    id: 3,
+    type: "rent",
+    title: "Cozy Studio, Old Town Ljubljana",
+    location: "Ljubljana, Center",
+    price: "€900/mo",
+    rooms: 1,
+    area: 38,
+    image: "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/ed09dae1-c9de-450b-8ab8-4a78e73f33de.jpg",
+    badge: "rent",
+    rating: 4.7,
+  },
+  {
+    id: 4,
+    type: "buy",
+    title: "Townhouse, Maribor",
+    location: "Maribor, Podravska",
+    price: "€195,000",
+    rooms: 4,
+    area: 130,
+    image: "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/ed09dae1-c9de-450b-8ab8-4a78e73f33de.jpg",
+    badge: "buy",
+    rating: 4.8,
+  },
+  {
+    id: 5,
+    type: "rent",
+    title: "Sea-view Apartment, Piran",
+    location: "Piran, Primorska",
+    price: "€1,400/mo",
+    rooms: 2,
+    area: 65,
+    image: "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/099ee108-2e73-4529-b37a-2142693406a8.jpg",
+    badge: "rent",
+    rating: 4.9,
+  },
+  {
+    id: 6,
+    type: "buy",
+    title: "Investment Property, Kranjska Gora",
+    location: "Kranjska Gora, Gorenjska",
+    price: "€340,000",
+    rooms: 4,
+    area: 155,
+    image: "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/fd974564-c3d8-469b-bc34-c5070b904421.jpg",
+    badge: "buy",
+    rating: 4.6,
+  },
 ]
 
-const HeroHeader = () => {
+const regions = [
+  { name: "Ljubljana", count: "1,240+", emoji: "🏙️" },
+  { name: "Maribor", count: "680+", emoji: "🏘️" },
+  { name: "Bled & Gorenjska", count: "420+", emoji: "🏔️" },
+  { name: "Piran & Coast", count: "380+", emoji: "🌊" },
+  { name: "Celje", count: "290+", emoji: "🏡" },
+  { name: "Kranjska Gora", count: "210+", emoji: "⛷️" },
+]
+
+const HeroHeader = ({ lang, setLang, t }: { lang: Language; setLang: (l: Language) => void; t: Record<string, string> }) => {
   const [menuState, setMenuState] = React.useState(false)
   const [isScrolled, setIsScrolled] = React.useState(false)
 
   React.useEffect(() => {
     if (typeof window === "undefined") return
-
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
+    const handleScroll = () => setIsScrolled(window.scrollY > 50)
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  const menuItems = [
+    { name: t.nav_buy, href: "#listings" },
+    { name: t.nav_rent, href: "#listings" },
+    { name: t.nav_about, href: "#features" },
+    { name: t.nav_contact, href: "#contact" },
+  ]
 
   return (
     <header>
       <nav data-state={menuState && "active"} className="fixed z-20 w-full px-2 group">
         <div
           className={cn(
-            "mx-auto mt-1 max-w-4xl px-4 transition-all duration-300 lg:px-8",
-            isScrolled && "bg-background/50 max-w-3xl rounded-2xl border backdrop-blur-lg lg:px-4",
+            "mx-auto mt-1 max-w-5xl px-4 transition-all duration-300 lg:px-8",
+            isScrolled && "bg-background/50 max-w-4xl rounded-2xl border backdrop-blur-lg lg:px-4",
           )}
         >
           <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-0">
@@ -159,13 +408,12 @@ const HeroHeader = () => {
               <a href="/" aria-label="home" className="flex items-center space-x-2">
                 <Logo />
               </a>
-
               <button
                 onClick={() => setMenuState(!menuState)}
-                aria-label={menuState == true ? "Закрыть меню" : "Открыть меню"}
+                aria-label="Toggle menu"
                 className="relative z-20 -m-2.5 -mr-4 block cursor-pointer p-2.5 lg:hidden"
               >
-                <Menu className="in-data-[state=active]:rotate-180 group-data-[state=active]:scale-0 group-data-[state=active]:opacity-0 m-auto size-6 duration-200" />
+                <Menu className="group-data-[state=active]:scale-0 group-data-[state=active]:opacity-0 m-auto size-6 duration-200" />
                 <X className="group-data-[state=active]:rotate-0 group-data-[state=active]:scale-100 group-data-[state=active]:opacity-100 absolute inset-0 m-auto size-6 -rotate-180 scale-0 opacity-0 duration-200" />
               </button>
             </div>
@@ -174,10 +422,7 @@ const HeroHeader = () => {
               <ul className="flex gap-8 text-sm">
                 {menuItems.map((item, index) => (
                   <li key={index}>
-                    <a
-                      href={item.href}
-                      className="text-muted-foreground hover:text-accent-foreground block duration-150"
-                    >
+                    <a href={item.href} className="text-muted-foreground hover:text-accent-foreground block duration-150">
                       <span>{item.name}</span>
                     </a>
                   </li>
@@ -190,29 +435,36 @@ const HeroHeader = () => {
                 <ul className="space-y-6 text-base">
                   {menuItems.map((item, index) => (
                     <li key={index}>
-                      <a
-                        href={item.href}
-                        className="text-muted-foreground hover:text-accent-foreground block duration-150"
-                      >
+                      <a href={item.href} className="text-muted-foreground hover:text-accent-foreground block duration-150">
                         <span>{item.name}</span>
                       </a>
                     </li>
                   ))}
                 </ul>
               </div>
-              <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
-                <Button variant="outline" size="sm" className={cn(isScrolled && "lg:hidden")}>
-                  <span>Войти</span>
+              <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit items-center">
+                {/* Language switcher */}
+                <div className="flex gap-1 border rounded-lg p-1">
+                  {(["en", "sl", "ru"] as Language[]).map((l) => (
+                    <button
+                      key={l}
+                      onClick={() => setLang(l)}
+                      className={cn(
+                        "px-2 py-1 rounded text-xs font-medium transition-colors uppercase",
+                        lang === l
+                          ? "bg-emerald-600 text-white"
+                          : "text-muted-foreground hover:text-foreground",
+                      )}
+                    >
+                      {l}
+                    </button>
+                  ))}
+                </div>
+                <Button variant="outline" size="sm">
+                  <span>{t.nav_login}</span>
                 </Button>
-                <Button
-                  size="sm"
-                  className={cn(
-                    isScrolled
-                      ? "lg:inline-flex bg-orange-500 hover:bg-orange-600"
-                      : "hidden bg-orange-500 hover:bg-orange-600",
-                  )}
-                >
-                  <span>Начать</span>
+                <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white hidden lg:inline-flex">
+                  <span>{t.nav_list}</span>
                 </Button>
               </div>
             </div>
@@ -223,470 +475,437 @@ const HeroHeader = () => {
   )
 }
 
-const Logo = ({ className }: { className?: string }) => {
-  return (
-    <div className={cn("flex items-center space-x-2", className)}>
-      <div className="bg-orange-500 rounded-lg p-2">
-        <Code className="h-6 w-6 text-white" />
-      </div>
-      <span className="text-xl font-bold">КодМастер</span>
+const Logo = ({ className }: { className?: string }) => (
+  <div className={cn("flex items-center space-x-2", className)}>
+    <div className="bg-emerald-600 rounded-lg p-2">
+      <Home className="h-5 w-5 text-white" />
     </div>
-  )
-}
-
-const CardDecorator = ({ children }: { children: React.ReactNode }) => (
-  <div
-    aria-hidden
-    className="relative mx-auto size-36 [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]"
-  >
-    <div className="absolute inset-0 [--border:black] dark:[--border:white] bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-[size:24px_24px] opacity-10" />
-    <div className="bg-background absolute inset-0 m-auto flex size-12 items-center justify-center border-t border-l border-orange-200">
-      {children}
+    <div className="flex flex-col leading-none">
+      <span className="text-xs font-medium text-emerald-600 tracking-widest uppercase">ILAL</span>
+      <span className="text-lg font-bold tracking-tight">SlovenEstate</span>
     </div>
   </div>
 )
 
 export default function SoftwareDevelopmentWebsite() {
+  const [lang, setLang] = React.useState<Language>("en")
+  const [activeTab, setActiveTab] = React.useState<"buy" | "rent">("buy")
+  const t = translations[lang]
+
   const gridItems = [
-    "https://cdn.poehali.dev/templates/landing-page/fluid-gradient.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/vr-experience.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/ai-whiteboard.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/human-ai.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/digital-eye.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/robot.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/purple-flow.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/data-beam.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/ai-keyboard.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/fiber-optic.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/fluid-gradient.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/vr-experience.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/ai-whiteboard.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/human-ai.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/digital-eye.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/robot.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/purple-flow.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/data-beam.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/ai-keyboard.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/fiber-optic.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/fluid-gradient.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/vr-experience.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/ai-whiteboard.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/human-ai.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/digital-eye.jpg",
-    "https://cdn.poehali.dev/templates/landing-page/robot.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/099ee108-2e73-4529-b37a-2142693406a8.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/ed09dae1-c9de-450b-8ab8-4a78e73f33de.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/fd974564-c3d8-469b-bc34-c5070b904421.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/099ee108-2e73-4529-b37a-2142693406a8.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/ed09dae1-c9de-450b-8ab8-4a78e73f33de.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/fd974564-c3d8-469b-bc34-c5070b904421.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/099ee108-2e73-4529-b37a-2142693406a8.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/ed09dae1-c9de-450b-8ab8-4a78e73f33de.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/fd974564-c3d8-469b-bc34-c5070b904421.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/099ee108-2e73-4529-b37a-2142693406a8.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/ed09dae1-c9de-450b-8ab8-4a78e73f33de.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/fd974564-c3d8-469b-bc34-c5070b904421.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/099ee108-2e73-4529-b37a-2142693406a8.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/ed09dae1-c9de-450b-8ab8-4a78e73f33de.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/fd974564-c3d8-469b-bc34-c5070b904421.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/099ee108-2e73-4529-b37a-2142693406a8.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/ed09dae1-c9de-450b-8ab8-4a78e73f33de.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/fd974564-c3d8-469b-bc34-c5070b904421.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/099ee108-2e73-4529-b37a-2142693406a8.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/ed09dae1-c9de-450b-8ab8-4a78e73f33de.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/fd974564-c3d8-469b-bc34-c5070b904421.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/099ee108-2e73-4529-b37a-2142693406a8.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/ed09dae1-c9de-450b-8ab8-4a78e73f33de.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/fd974564-c3d8-469b-bc34-c5070b904421.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/099ee108-2e73-4529-b37a-2142693406a8.jpg",
+    "https://cdn.poehali.dev/projects/8c1946b9-f0e4-491c-9664-929d217c5f0c/files/ed09dae1-c9de-450b-8ab8-4a78e73f33de.jpg",
   ]
+
+  const filteredListings = activeTab === "buy"
+    ? listings.filter((l) => l.type === "buy")
+    : listings.filter((l) => l.type === "rent")
 
   return (
     <>
-      <HeroHeader />
+      <HeroHeader lang={lang} setLang={setLang} t={t} />
       <main className="overflow-hidden">
-        <div
-          aria-hidden
-          className="z-[2] absolute inset-0 pointer-events-none isolate opacity-50 contain-strict hidden lg:block"
-        >
-          <div className="w-[35rem] h-[80rem] -translate-y-[350px] absolute left-0 top-0 -rotate-45 rounded-full bg-[radial-gradient(68.54%_68.72%_at_55.02%_31.46%,hsla(25,100%,50%,.08)_0,hsla(25,100%,45%,.02)_50%,hsla(25,100%,40%,0)_80%)]" />
-          <div className="h-[80rem] absolute left-0 top-0 w-56 -rotate-45 rounded-full bg-[radial-gradient(50%_50%_at_50%_50%,hsla(25,100%,50%,.06)_0,hsla(25,100%,45%,.02)_80%,transparent_100%)] [translate:5%_-50%]" />
+        {/* Gradient decorations */}
+        <div aria-hidden className="z-[2] absolute inset-0 pointer-events-none isolate opacity-50 contain-strict hidden lg:block">
+          <div className="w-[35rem] h-[80rem] -translate-y-[350px] absolute left-0 top-0 -rotate-45 rounded-full bg-[radial-gradient(68.54%_68.72%_at_55.02%_31.46%,hsla(152,60%,40%,.08)_0,hsla(152,60%,40%,.02)_50%,transparent_80%)]" />
+          <div className="h-[80rem] absolute left-0 top-0 w-56 -rotate-45 rounded-full bg-[radial-gradient(50%_50%_at_50%_50%,hsla(152,60%,40%,.06)_0,transparent_100%)] [translate:5%_-50%]" />
         </div>
 
+        {/* HERO */}
         <section>
           <div className="relative pt-24 md:pt-36">
-            <div
-              aria-hidden
-              className="absolute inset-0 -z-10 size-full [background:radial-gradient(125%_125%_at_50%_100%,transparent_0%,var(--background)_75%)]"
-            />
+            <div aria-hidden className="absolute inset-0 -z-10 size-full [background:radial-gradient(125%_125%_at_50%_100%,transparent_0%,var(--background)_75%)]" />
             <div className="mx-auto max-w-7xl px-6">
               <div className="text-center sm:mx-auto lg:mr-auto lg:mt-0">
                 <AnimatedGroup variants={transitionVariants}>
                   <a
-                    href="#services"
+                    href="#listings"
                     className="hover:bg-background dark:hover:border-t-border bg-muted group mx-auto flex w-fit items-center gap-4 rounded-full border p-1 pl-4 shadow-md shadow-black/5 transition-all duration-300 dark:border-t-white/5 dark:shadow-zinc-950"
                   >
-                    <span className="text-foreground text-sm">Индивидуальные решения для малого бизнеса</span>
+                    <span className="text-foreground text-sm">{t.hero_badge}</span>
                     <span className="dark:border-background block h-4 w-0.5 border-l bg-white dark:bg-zinc-700"></span>
-
                     <div className="bg-background group-hover:bg-muted size-6 overflow-hidden rounded-full duration-500">
                       <div className="flex w-12 -translate-x-1/2 duration-500 ease-in-out group-hover:translate-x-0">
-                        <span className="flex size-6">
-                          <ArrowRight className="m-auto size-3" />
-                        </span>
-                        <span className="flex size-6">
-                          <ArrowRight className="m-auto size-3" />
-                        </span>
+                        <span className="flex size-6"><ArrowRight className="m-auto size-3" /></span>
+                        <span className="flex size-6"><ArrowRight className="m-auto size-3" /></span>
                       </div>
                     </div>
                   </a>
 
-                  <h1 className="mt-8 max-w-4xl mx-auto text-balance text-6xl md:text-7xl lg:mt-16 xl:text-[5.25rem]">
-                    Трансформируйте бизнес с{" "}
-                    <span className="inline-block text-orange-500 text-6xl md:text-7xl xl:text-[5.25rem] font-semibold">
-                      современным ПО
+                  <h1 className="mt-8 max-w-4xl mx-auto text-balance text-5xl md:text-6xl lg:mt-16 xl:text-[4.5rem] font-bold">
+                    {t.hero_title}{" "}
+                    <span className="inline-block text-emerald-500 font-semibold">
+                      {t.hero_highlight}
                     </span>
                   </h1>
                   <p className="mx-auto mt-8 max-w-2xl text-balance text-lg text-muted-foreground">
-                    Создаем масштабируемые и эффективные программные решения под ваши бизнес-задачи.
-                    От веб-приложений до мобильных приложений - помогаем малому бизнесу расти с помощью технологий.
+                    {t.hero_sub}
                   </p>
+                </AnimatedGroup>
+
+                {/* Search bar */}
+                <AnimatedGroup
+                  variants={{
+                    container: { visible: { transition: { staggerChildren: 0.05, delayChildren: 0.5 } } },
+                    ...transitionVariants,
+                  }}
+                  className="mt-10"
+                >
+                  <div className="mx-auto max-w-2xl">
+                    {/* Tabs */}
+                    <div className="flex gap-2 mb-3 justify-center">
+                      <button
+                        onClick={() => setActiveTab("buy")}
+                        className={cn(
+                          "px-5 py-2 rounded-full text-sm font-medium transition-colors",
+                          activeTab === "buy" ? "bg-emerald-600 text-white" : "bg-muted text-muted-foreground hover:text-foreground",
+                        )}
+                      >
+                        {t.tab_buy}
+                      </button>
+                      <button
+                        onClick={() => setActiveTab("rent")}
+                        className={cn(
+                          "px-5 py-2 rounded-full text-sm font-medium transition-colors",
+                          activeTab === "rent" ? "bg-emerald-600 text-white" : "bg-muted text-muted-foreground hover:text-foreground",
+                        )}
+                      >
+                        {t.tab_rent}
+                      </button>
+                    </div>
+                    {/* Search input */}
+                    <div className="flex gap-2 bg-background border rounded-2xl p-2 shadow-lg shadow-emerald-500/10">
+                      <div className="flex flex-1 items-center gap-3 px-3">
+                        <MapPin className="h-5 w-5 text-emerald-500 shrink-0" />
+                        <input
+                          type="text"
+                          placeholder={t.search_placeholder}
+                          className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                        />
+                      </div>
+                      <Button className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-6">
+                        <Search className="h-4 w-4 mr-2" />
+                        {t.search_btn}
+                      </Button>
+                    </div>
+                  </div>
                 </AnimatedGroup>
 
                 <AnimatedGroup
                   variants={{
-                    container: {
-                      visible: {
-                        transition: {
-                          staggerChildren: 0.05,
-                          delayChildren: 0.75,
-                        },
-                      },
-                    },
+                    container: { visible: { transition: { staggerChildren: 0.05, delayChildren: 0.75 } } },
                     ...transitionVariants,
                   }}
-                  className="mt-12 flex flex-col items-center justify-center gap-2 md:flex-row"
+                  className="mt-6 flex flex-col items-center justify-center gap-2 md:flex-row"
                 >
-                  <div key={1} className="bg-orange-500/10 rounded-[14px] border border-orange-200 p-0.5">
-                    <Button size="lg" className="rounded-xl px-5 text-base bg-orange-500 hover:bg-orange-600">
-                      <span className="text-nowrap">Бесплатная консультация</span>
+                  <div className="bg-emerald-500/10 rounded-[14px] border border-emerald-200 p-0.5">
+                    <Button size="lg" className="rounded-xl px-5 text-base bg-emerald-600 hover:bg-emerald-700 text-white">
+                      <span className="text-nowrap">{t.hero_cta}</span>
                     </Button>
                   </div>
-                  <Button key={2} size="lg" variant="ghost" className="h-10.5 rounded-xl px-5 hover:text-orange-500">
-                    <span className="text-nowrap">Наши работы</span>
+                  <Button size="lg" variant="ghost" className="h-10.5 rounded-xl px-5 hover:text-emerald-500">
+                    <span className="text-nowrap">{t.hero_cta2}</span>
                   </Button>
                 </AnimatedGroup>
               </div>
             </div>
 
+            {/* Grid of property images */}
             <AnimatedGroup
               variants={{
-                container: {
-                  visible: {
-                    transition: {
-                      staggerChildren: 0.05,
-                      delayChildren: 0.75,
-                    },
-                  },
-                },
+                container: { visible: { transition: { staggerChildren: 0.05, delayChildren: 0.75 } } },
                 ...transitionVariants,
               }}
             >
               <div className="relative -mr-56 mt-8 overflow-hidden px-2 sm:mr-0 sm:mt-12 md:mt-20">
-                <div
-                  aria-hidden
-                  className="bg-gradient-to-b to-background absolute inset-0 z-10 from-transparent from-35%"
-                />
-                <div className="inset-shadow-2xs ring-background dark:inset-shadow-white/20 bg-background relative mx-auto max-w-6xl overflow-hidden rounded-2xl border border-orange-200 p-4 shadow-lg shadow-orange-500/15 ring-1">
-                  <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900 aspect-[15/8] relative rounded-2xl border border-orange-200 overflow-hidden">
-                    <GridMotion items={gridItems} gradientColor="rgba(249, 115, 22, 0.1)" className="h-full w-full" />
+                <div aria-hidden className="bg-gradient-to-b to-background absolute inset-0 z-10 from-transparent from-35%" />
+                <div className="inset-shadow-2xs ring-background dark:inset-shadow-white/20 bg-background relative mx-auto max-w-6xl overflow-hidden rounded-2xl border border-emerald-200 p-4 shadow-lg shadow-emerald-500/15 ring-1">
+                  <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950 dark:to-emerald-900 aspect-[15/8] relative rounded-2xl border border-emerald-200 overflow-hidden">
+                    <GridMotion items={gridItems} gradientColor="rgba(16, 185, 129, 0.1)" className="h-full w-full" />
                   </div>
                 </div>
               </div>
-
-              <section className="bg-background pb-16 pt-16 md:pb-32">
-                <div className="group relative m-auto max-w-5xl px-6">
-                  <div className="absolute inset-0 z-10 flex scale-95 items-center justify-center opacity-0 duration-500 group-hover:scale-100 group-hover:opacity-100">
-                    <a href="#contact" className="block text-sm duration-150 hover:opacity-75 text-orange-500">
-                      <span>Готовы начать проект?</span>
-                      <ChevronRight className="ml-1 inline-block size-3" />
-                    </a>
-                  </div>
-                  <div className="group-hover:blur-xs mx-auto mt-12 grid max-w-2xl grid-cols-4 gap-x-12 gap-y-8 transition-all duration-500 group-hover:opacity-50 sm:gap-x-16 sm:gap-y-14">
-                    <div className="flex">
-                      <img
-                        className="mx-auto h-5 w-fit dark:invert opacity-60"
-                        src="https://html.tailus.io/blocks/customers/nvidia.svg"
-                        alt="Логотип клиента"
-                        height="20"
-                        width="auto"
-                      />
-                    </div>
-                    <div className="flex">
-                      <img
-                        className="mx-auto h-4 w-fit dark:invert opacity-60"
-                        src="https://html.tailus.io/blocks/customers/column.svg"
-                        alt="Логотип клиента"
-                        height="16"
-                        width="auto"
-                      />
-                    </div>
-                    <div className="flex">
-                      <img
-                        className="mx-auto h-4 w-fit dark:invert opacity-60"
-                        src="https://html.tailus.io/blocks/customers/github.svg"
-                        alt="Логотип клиента"
-                        height="16"
-                        width="auto"
-                      />
-                    </div>
-                    <div className="flex">
-                      <img
-                        className="mx-auto h-5 w-fit dark:invert opacity-60"
-                        src="https://html.tailus.io/blocks/customers/nike.svg"
-                        alt="Логотип клиента"
-                        height="20"
-                        width="auto"
-                      />
-                    </div>
-                    <div className="flex">
-                      <img
-                        className="mx-auto h-5 w-fit dark:invert opacity-60"
-                        src="https://html.tailus.io/blocks/customers/lemonsqueezy.svg"
-                        alt="Логотип клиента"
-                        height="20"
-                        width="auto"
-                      />
-                    </div>
-                    <div className="flex">
-                      <img
-                        className="mx-auto h-4 w-fit dark:invert opacity-60"
-                        src="https://html.tailus.io/blocks/customers/laravel.svg"
-                        alt="Логотип клиента"
-                        height="16"
-                        width="auto"
-                      />
-                    </div>
-                    <div className="flex">
-                      <img
-                        className="mx-auto h-7 w-fit dark:invert opacity-60"
-                        src="https://html.tailus.io/blocks/customers/lilly.svg"
-                        alt="Логотип клиента"
-                        height="28"
-                        width="auto"
-                      />
-                    </div>
-                    <div className="flex">
-                      <img
-                        className="mx-auto h-6 w-fit dark:invert opacity-60"
-                        src="https://html.tailus.io/blocks/customers/openai.svg"
-                        alt="Логотип клиента"
-                        height="24"
-                        width="auto"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </section>
             </AnimatedGroup>
           </div>
         </section>
 
-        <section className="bg-muted/50 py-16 md:py-32 dark:bg-transparent">
+        {/* STATS */}
+        <section className="bg-background pb-16 pt-16 md:pb-24">
           <div className="mx-auto max-w-5xl px-6">
-            <div className="text-center">
-              <h2 className="text-balance text-4xl font-semibold lg:text-5xl">
-                Почему выбирают <span className="text-orange-500">КодМастер</span>
-              </h2>
-              <p className="mt-4 text-muted-foreground">
-                Мы создаем качественные программные решения, которые помогают вашему бизнесу расти и преуспевать в цифровом мире.
-              </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+              {[
+                { value: "5,200+", label: t.stats_listings },
+                { value: "3,800+", label: t.stats_sold },
+                { value: "120+", label: t.stats_agents },
+                { value: "12", label: t.stats_cities },
+              ].map((stat, i) => (
+                <div key={i} className="space-y-1">
+                  <div className="text-3xl md:text-4xl font-bold text-emerald-500">{stat.value}</div>
+                  <div className="text-sm text-muted-foreground">{stat.label}</div>
+                </div>
+              ))}
             </div>
-            <Card className="mx-auto mt-8 grid max-w-sm divide-y overflow-hidden shadow-zinc-950/5 border-orange-200 *:text-center md:mt-16 md:max-w-full md:grid-cols-3 md:divide-x md:divide-y-0">
-              <div className="group shadow-zinc-950/5">
-                <CardHeader className="pb-3">
-                  <CardDecorator>
-                    <Zap className="size-6 text-orange-500" aria-hidden />
-                  </CardDecorator>
+          </div>
+        </section>
 
-                  <h3 className="mt-6 font-medium">Быстрая разработка</h3>
-                </CardHeader>
-
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">
-                    Быстрое прототипирование и гибкий процесс разработки для скорейшего вывода вашего продукта на рынок.
-                  </p>
-                </CardContent>
+        {/* LISTINGS */}
+        <section id="listings" className="py-16 md:py-24 bg-muted/30">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.featured_title}</h2>
+              <p className="text-muted-foreground text-lg">{t.featured_sub}</p>
+              <div className="flex gap-2 justify-center mt-6">
+                <button
+                  onClick={() => setActiveTab("buy")}
+                  className={cn(
+                    "px-5 py-2 rounded-full text-sm font-medium transition-colors",
+                    activeTab === "buy" ? "bg-emerald-600 text-white" : "bg-muted text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  {t.tab_buy}
+                </button>
+                <button
+                  onClick={() => setActiveTab("rent")}
+                  className={cn(
+                    "px-5 py-2 rounded-full text-sm font-medium transition-colors",
+                    activeTab === "rent" ? "bg-emerald-600 text-white" : "bg-muted text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  {t.tab_rent}
+                </button>
               </div>
+            </div>
 
-              <div className="group shadow-zinc-950/5">
-                <CardHeader className="pb-3">
-                  <CardDecorator>
-                    <Settings2 className="size-6 text-orange-500" aria-hidden />
-                  </CardDecorator>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredListings.map((listing) => (
+                <motion.div
+                  key={listing.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4 }}
+                  className="bg-background rounded-2xl border overflow-hidden shadow-sm hover:shadow-md hover:border-emerald-300 transition-all duration-300 cursor-pointer group"
+                >
+                  <div className="relative overflow-hidden aspect-[4/3]">
+                    <img
+                      src={listing.image}
+                      alt={listing.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute top-3 left-3">
+                      <span className={cn(
+                        "px-3 py-1 rounded-full text-xs font-semibold",
+                        listing.badge === "buy" ? "bg-emerald-600 text-white" : "bg-blue-600 text-white",
+                      )}>
+                        {listing.badge === "buy" ? t.prop_buy : t.prop_rent}
+                      </span>
+                    </div>
+                    <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1">
+                      <Star className="h-3 w-3 text-yellow-400 fill-yellow-400" />
+                      <span className="text-white text-xs font-medium">{listing.rating}</span>
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-semibold text-base mb-1 group-hover:text-emerald-600 transition-colors">{listing.title}</h3>
+                    <div className="flex items-center gap-1 text-muted-foreground text-sm mb-3">
+                      <MapPin className="h-3.5 w-3.5" />
+                      <span>{listing.location}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="text-xl font-bold text-emerald-600">{listing.price}</div>
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                        <span>{listing.rooms} {t.prop_rooms}</span>
+                        <span>{listing.area} {t.prop_area}</span>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-                  <h3 className="mt-6 font-medium">Масштабируемые решения</h3>
-                </CardHeader>
+        {/* REGIONS */}
+        <section id="regions" className="py-16 md:py-24">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.regions_title}</h2>
+              <p className="text-muted-foreground text-lg">{t.regions_sub}</p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              {regions.map((region, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.07 }}
+                  className="bg-muted/50 hover:bg-emerald-50 dark:hover:bg-emerald-950 border hover:border-emerald-300 rounded-2xl p-5 text-center cursor-pointer transition-all duration-300 group"
+                >
+                  <div className="text-3xl mb-2">{region.emoji}</div>
+                  <div className="font-semibold text-sm group-hover:text-emerald-600 transition-colors">{region.name}</div>
+                  <div className="text-xs text-muted-foreground mt-1">{region.count}</div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">
-                    Созданы для роста вместе с вашим бизнесом - наши решения масштабируются по мере развития ваших потребностей.
-                  </p>
-                </CardContent>
-              </div>
+        {/* FEATURES */}
+        <section id="features" className="py-16 md:py-24 bg-muted/30">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="text-center mb-14">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.features_title}</h2>
+              <p className="text-muted-foreground text-lg">{t.features_sub}</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { icon: Building2, title: t.f1_title, desc: t.f1_desc },
+                { icon: Search, title: t.f2_title, desc: t.f2_desc },
+                { icon: Star, title: t.f3_title, desc: t.f3_desc },
+                { icon: TrendingUp, title: t.f4_title, desc: t.f4_desc },
+              ].map((feature, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="bg-background rounded-2xl border p-6 hover:border-emerald-300 hover:shadow-sm transition-all duration-300"
+                >
+                  <div className="bg-emerald-100 dark:bg-emerald-950 rounded-xl p-3 w-fit mb-4">
+                    <feature.icon className="h-6 w-6 text-emerald-600" />
+                  </div>
+                  <h3 className="font-semibold text-base mb-2">{feature.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{feature.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-              <div className="group shadow-zinc-950/5">
-                <CardHeader className="pb-3">
-                  <CardDecorator>
-                    <Sparkles className="size-6 text-orange-500" aria-hidden />
-                  </CardDecorator>
-
-                  <h3 className="mt-6 font-medium">Современные технологии</h3>
-                </CardHeader>
-
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">
-                    Используем новейшие технологии и лучшие практики, чтобы ваше ПО было готово к будущему.
-                  </p>
-                </CardContent>
-              </div>
-            </Card>
+        {/* CTA */}
+        <section id="contact" className="py-20 md:py-32">
+          <div className="mx-auto max-w-4xl px-6 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-3xl p-12 md:p-16 relative overflow-hidden"
+            >
+              <div aria-hidden className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(255,255,255,0.15),transparent)]" />
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{t.cta_title}</h2>
+              <p className="text-emerald-100 text-lg mb-8 max-w-2xl mx-auto">{t.cta_sub}</p>
+              <Button size="lg" className="bg-white text-emerald-700 hover:bg-emerald-50 rounded-xl px-8 font-semibold">
+                {t.cta_btn}
+                <ChevronRight className="ml-2 h-4 w-4" />
+              </Button>
+            </motion.div>
           </div>
         </section>
       </main>
 
-      <footer className="bg-background border-t border-orange-200">
-        <div className="mx-auto max-w-7xl py-16 px-6 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-            {/* Company Info */}
-            <div className="space-y-4 sm:col-span-2 lg:col-span-1">
+      {/* FOOTER */}
+      <footer className="border-t bg-background">
+        <div className="mx-auto max-w-7xl px-6 py-12">
+          <div className="grid grid-cols-1 gap-10 md:grid-cols-4">
+            {/* Brand */}
+            <div className="space-y-4">
               <Logo />
-              <p className="text-sm text-muted-foreground max-w-xs">
-                Трансформируйте свой бизнес с помощью индивидуальных программных решений. Создаем масштабируемые приложения, которые растут вместе с вашим успехом.
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Slovenia's premier real estate classified platform. Buy, sell, and rent across all of Slovenia.
               </p>
-              <div className="flex space-x-4">
-                <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors">
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.96 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                  </svg>
-                </a>
-                <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors">
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/>
-                  </svg>
-                </a>
-                <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors">
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M15.402 21v-6.966h2.333l.349-2.708h-2.682V9.598c0-.784.218-1.319 1.342-1.319h1.434V5.857a19.188 19.188 0 0 0-2.09-.107c-2.067 0-3.482 1.262-3.482 3.58v1.996h-2.338v2.708h2.338V21H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-4.598z"/>
-                  </svg>
-                </a>
+              <div className="flex gap-2">
+                {(["en", "sl", "ru"] as Language[]).map((l) => (
+                  <button
+                    key={l}
+                    onClick={() => setLang(l)}
+                    className={cn(
+                      "px-2.5 py-1 rounded text-xs font-medium border transition-colors uppercase",
+                      lang === l ? "bg-emerald-600 text-white border-emerald-600" : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    {l}
+                  </button>
+                ))}
               </div>
             </div>
 
             {/* Services */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-foreground">Услуги</h3>
+              <h3 className="text-sm font-semibold">{t.footer_services}</h3>
               <ul className="space-y-2 text-sm">
-                <li>
-                  <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors">
-                    Веб-разработка
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors">
-                    Мобильные приложения
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors">
-                    Заказное ПО
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors">
-                    Разработка API
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors">
-                    Облачные решения
-                  </a>
-                </li>
+                {[t.footer_buy, t.footer_rent, t.footer_sell, t.footer_invest, t.footer_appraisal].map((item, i) => (
+                  <li key={i}>
+                    <a href="#" className="text-muted-foreground hover:text-emerald-500 transition-colors">{item}</a>
+                  </li>
+                ))}
               </ul>
             </div>
 
             {/* Company */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-foreground">Компания</h3>
+              <h3 className="text-sm font-semibold">{t.footer_company}</h3>
               <ul className="space-y-2 text-sm">
-                <li>
-                  <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors">
-                    О нас
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors">
-                    Наша команда
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors">
-                    Карьера
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors">
-                    Кейсы
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors">
-                    Блог
-                  </a>
-                </li>
+                {[t.footer_about, t.footer_team, t.footer_careers, t.footer_blog, t.footer_press].map((item, i) => (
+                  <li key={i}>
+                    <a href="#" className="text-muted-foreground hover:text-emerald-500 transition-colors">{item}</a>
+                  </li>
+                ))}
               </ul>
             </div>
 
             {/* Contact */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-foreground">Контакты</h3>
+              <h3 className="text-sm font-semibold">{t.footer_contact}</h3>
               <ul className="space-y-3 text-sm text-muted-foreground">
-                <li className="flex items-center space-x-2">
-                  <svg className="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                    />
-                  </svg>
-                  <span className="break-all">info@kodmaster.ru</span>
+                <li className="flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-emerald-500 shrink-0" />
+                  <span>info@ilalslovenestate.si</span>
                 </li>
-                <li className="flex items-center space-x-2">
-                  <svg className="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                    />
-                  </svg>
-                  <span>+7 (495) 123-45-67</span>
+                <li className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-emerald-500 shrink-0" />
+                  <span>+386 1 234 5678</span>
                 </li>
-                <li className="flex items-start space-x-2">
-                  <svg className="h-4 w-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                  <span>
-                    ул. Технопарковая, 15
-                    <br />
-                    Москва, 123456
-                  </span>
+                <li className="flex items-center gap-2">
+                  <Globe className="h-4 w-4 text-emerald-500 shrink-0" />
+                  <span>Ljubljana, Slovenia</span>
                 </li>
               </ul>
             </div>
           </div>
 
-          {/* Bottom section */}
-          <div className="mt-12 pt-8 border-t border-orange-200">
-            <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
-              <div className="text-sm text-muted-foreground">2024 КодМастер. Все права защищены.</div>
-              <div className="flex flex-wrap justify-center sm:justify-end gap-x-6 gap-y-2 text-sm">
-                <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors">
-                  Политика конфиденциальности
-                </a>
-                <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors">
-                  Условия использования
-                </a>
-                <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors">
-                  Политика cookies
-                </a>
+          <div className="mt-12 pt-8 border-t border-emerald-100 dark:border-emerald-900">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div className="text-sm text-muted-foreground">{t.footer_copy}</div>
+              <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+                {[t.footer_privacy, t.footer_terms, t.footer_cookies].map((item, i) => (
+                  <a key={i} href="#" className="text-muted-foreground hover:text-emerald-500 transition-colors">{item}</a>
+                ))}
               </div>
             </div>
           </div>
